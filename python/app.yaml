@@ -1,0 +1,32 @@
+#application: vueapi-canary-devel-search
+#application: tsl-vue
+application: vueapi-canary
+version: 1-python
+runtime: python27
+api_version: 1
+threadsafe: yes
+
+handlers:
+- url: /favicon\.ico
+  static_files: favicon.ico
+  upload: favicon\.ico
+
+- url: /stats.*
+  script: google.appengine.ext.appstats.ui.app
+
+- url: /remoteapi.*
+  script: google.appengine.ext.remote_api.handler.app
+  login: admin
+
+- url: .*
+  script: main.app
+
+libraries:
+- name: webapp2
+  version: "2.5.1"
+
+builtins:
+- remote_api: on
+- appstats: on
+
+
