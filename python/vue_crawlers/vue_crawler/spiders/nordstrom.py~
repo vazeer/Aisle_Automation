@@ -1,0 +1,92 @@
+'''
+Created on Jun 13, 2014
+
+@author: Behrooz
+'''
+
+import re
+
+from scrapy.selector import Selector
+from scrapy.contrib.spiders import CrawlSpider, Rule
+from scrapy.contrib.linkextractors.sgml import SgmlLinkExtractor
+
+from vue_crawler.items import VueCrawlerItem
+
+
+class NordstromSpider(CrawlSpider):
+  name = "nordy"
+  allowed_domains = ['shop.nordstrom.com']
+  start_urls = ['http://shop.nordstrom.com/c/womens-dresses-shop?origin=leftnav',
+#                'http://shop.nordstrom.com/c/womens-shoes',
+#                'http://shop.nordstrom.com/c/womens-handbags',
+#                'http://shop.nordstrom.com/c/accessories-handbags']
+  ]
+  rules = (
+  # //div[@id="women-panel"]//ul[1]|(//ul[@class="nav-group"])[2]
+  
+  #(//h3[text()='Category']//following::ul[1])|//a[@manual_cm_sp="Top Navigation-_-Shoes-_-Women"]//following::ul[1]
+  
+  
+  
+    # Extract the different pages on the main site.
+    Rule(SgmlLinkExtractor(restrict_xpaths=('(//li[@class="side-subnav"]/ul//li)[position() < 43]'))),
+      # Extract the different items on the page.
+   
+   # Rule(SgmlLinkExtractor(restrict_xpaths='(//ul[@class="numbers"])[1]')),
+       
+    Rule(SgmlLinkExtractor(restrict_xpaths=('//a[@class="title"]')),
+         callback='parse_item'),
+         
+         
+         
+#             # Extract the different pages on the main site.
+#    Rule(SgmlLinkExtractor(restrict_xpaths=('//div[@class="fashion-results-pager"]'))),
+#      # Extract the different items on the page.
+#    Rule(SgmlLinkExtractor(restrict_xpaths=('//div[@role="main"]'
+#                                            '//div[@class="fashion-item"]')),
+#         callback='parse_item'),
+  )
+
+  def parse_item(self, response):
+#     print response.url
+    sel = Selector(response)
+    # Reviews not working seems to dynamically retrieve using javascript
+    item = VueCrawlerItem()
+    self.PriceExtractor(item, sel)
+    item_num_str = sel.xpath('//div[@class="item-number-wrapper"]/text()').extract()[0]
+    item_num = re.findall(r'\d+', item_num_str)[0]
+    item['source_site'] = "shop.nordstrom.com"
+    item['product_title'] = str(sel.xpath('//section[@id="product-title"]//h1/text()').extract()[0])
+    item['product_item_num'] = item_num
+    item['product_url'] = response.url
+    item['description'] = sel.xpath('//section[@id="details-and-care"]//ul[@class="style-features"]//li/text()').extract()
+    item['image_urls'] = [sel.xpath('//div[@id="product-image"]//img/@src').extract()[0]]
+    res = sel.xpath('//nav[@id="breadcrumb-nav"]').extract()
+    print '*************',res
+    list = res.split('/')
+    for index in range(len(list)):
+        if index!=0:
+            item['product_tags'].append(list[index])
+   # item['product_tags'] = sel.xpath('//a[@class="bcElement"]//text()').extract()
+    
+    return item
+
+  def PriceExtractor(self, item, selector):
+    price = selector.xpath('//section[@id="price"]//td[@class="item-price heading-2"]//span/text()').extract()
+    if not price:
+      sale_text = selector.xpath('//section[@id="price"]//span[@class="sale-price"]/text()').extract()[0]
+      if sale_text:
+        print '%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%'  
+        sale_text = sale_text.replace("INR", "");
+     
+      item['sale_price'] = re.search(r"Now: (\$\d*\.\d\d)", sale_text).group(1)
+      list_text = selector.xpath('//section[@id="price"]//(span[@class="regular-price"]|span[@class="sale-price long-price"])/text()').extract()[0]
+      if list_text:
+        list_text = list_text.replace("INR", "");
+        
+      item['list_price'] = re.search(r"Was: (\$\d*\.\d\d)", list_text).group(1)
+    else:
+      v = price[0];
+      if v:
+        v = v.replace('INR', '');
+      item['list_price'] = v

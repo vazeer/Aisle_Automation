@@ -44,3 +44,20 @@ class VueCrawlerItem(Item):
   # See http://doc.scrapy.org/en/latest/topics/images.html#topics-images
   # for more details
   images = Field()
+
+  # to get all colors of product
+  product_colors = Field()
+
+  #to get available sizes of a product
+  product_sizes = Field()
+  
+  #tags to products
+  product_tags = Field()
+
+
+  tag = Field()
+  tag_product_ids = Field()
+
+
+
+
