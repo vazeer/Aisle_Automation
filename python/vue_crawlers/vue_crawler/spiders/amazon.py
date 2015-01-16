@@ -29,8 +29,7 @@ class AmazonSpider(CrawlSpider):
     sel = Selector(response)
     item = VueCrawlerItem()
     item['source_site'] = "amazon.com"
-    item['product_title'] = str(sel.xpath('//span[@id="productTitle"]'
-                                          '/text()').extract()[0])
+    item['product_title'] = str(sel.xpath('//span[@id="productTitle"]/text()').extract()[0])
     item['product_item_num'] = 0
     item['product_url'] = response.url
     item['description'] = sel.xpath('//div[@id="featured-bullets"]'

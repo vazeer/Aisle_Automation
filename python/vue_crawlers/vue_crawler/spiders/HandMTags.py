@@ -70,8 +70,6 @@ class HandMSpiderTags(CrawlSpider):
     
     print '@@@@@@@@@@@values3333: ',productIDs  
     
-    
-    
     res  = sel.xpath('(//ul[@class="breadcrumbs"]//li/a//text()|//ul[@class="breadcrumbs"]//li/strong//text())[position() > 1]').extract()
     print '*************',res
     list = []

@@ -5,16 +5,25 @@ Created on Jun 13, 2014
 '''
 
 import re
+import nltk
+from nltk.collocations import *
+from nltk.stem import *
 
-from scrapy.selector import Selector
+
+
 from scrapy.contrib.spiders import CrawlSpider, Rule
 from scrapy.contrib.linkextractors.sgml import SgmlLinkExtractor
 
 from vue_crawler.items import VueCrawlerItem
+import urlparse
+import urllib
+from scrapy.selector import Selector
 
+from scrapy.selector import HtmlXPathSelector
+from scrapy.contrib.linkextractors import LinkExtractor
 
-class MacysSpider(CrawlSpider):
-  name = "express"
+class ExpressTagsSpider(CrawlSpider):
+  name = "expressTags"
   allowed_domains = ['express.com']
   start_urls = [
     'http://www.express.com/clothing/women/new-arrivals/cat/cat120002',
@@ -68,70 +77,55 @@ class MacysSpider(CrawlSpider):
     'http://www.express.com/clothing/sale-men/clearance-men/cat/cat890006'
     
   ]
+  
   rules = (
-    
-     Rule(SgmlLinkExtractor(restrict_xpaths='//li[@class="mobile-two"]|//li[@class="two mobile-two"]')),
-      # Extract the different items on the page.
-    Rule(SgmlLinkExtractor(
-      restrict_xpaths=('//ul[@class="product-info"]')),
-      callback='parse_item'),
-    # Extract the different pages on the main site side menu.
-    Rule(SgmlLinkExtractor(restrict_xpaths=('//ul[@class="link-list"]'))),
-#     # Extract page number links
-#     Rule(SgmlLinkExtractor(restrict_xpaths=('//div[@class="twelve columns"]'))),
+  Rule(SgmlLinkExtractor(restrict_xpaths='//li[@class="mobile-two"]|//li[@class="two mobile-two"]'),callback='parse_item'),
+ # Rule(SgmlLinkExtractor(restrict_xpaths='//div[@class="ItemImage"]//a[1]'),callback='parse_item'),
   )
-
+  
+  def myParserTest(self,response):
+      print '**************test********************* URL:', response.url
+           
+    
+        
   def parse_item(self, response):
-    print '************* URL:', response.url
-    sel = Selector(response)
+ #   print '************* URL:', response.url
+    #sel = Selector(response)
+    hxs = Selector(response)
+    
     # Reviews not working seems to dynamically retrieve using javascript
     item = VueCrawlerItem()
-    self.PriceExtractor(item, sel)
-    item['source_site'] = "express.com"
-    item['product_title'] = str(sel.xpath('//h2[@itemprop="name"]//text()').extract()[0])
-    item_num_str = sel.xpath('//input[@id="productId"]/@value').extract()[0]
-    item_num = re.findall(r'\d+', item_num_str)[0]
-    item['product_item_num'] = item_num
-    self.ProductNumExtract(item, response.url)
-    item['product_url'] = response.url
-    item['description'] = sel.xpath('//div[@class="product-panel four columns"]'
-                                    '//div[@class="product-description"]'
-                                    '//p/text()').extract()
-    # Express dynamically loads there images so we cant easily scrap them.
-    bullet_description = sel.xpath('//div[@class="product-description"]//ul//li/text()').extract()
-    for desc_bullet in bullet_description:
-      if desc_bullet.strip():
-        item['description'].append(desc_bullet.strip())
-        
-    sizes = sel.xpath('(//select[@name="express-view-sizes-dropdown"]//option/text())[position()>1]').extract()
+  
+    item['product_item_num']  = str(response.url)
+ 
     
-    sizesstripped = [];
-    for index in range(len(sizes)):
-        v = str(sizes[index])
-        v = v.strip()
-        if  v!='':
-          sizesstripped.append(v)
-    item['product_sizes'] = sizesstripped
-    item['product_colors'] = sel.xpath('//ul[@id="express-view-colors"]//label/@title').extract()
+    productIDs = hxs.xpath('//div[@class="image-container"]//a[@class="ev-icon"]/@data-product-id').extract()
+   
+    res  = hxs.xpath('//ul[@id="selected-filters"]//li/@data-value').extract()
+    tg2 = hxs.xpath('//h1[@id="total-products"]/text()').extract()[0]
+    tg1 = hxs.xpath('//li[@class="open"]//text()').extract()[0]
+    
     list = []
-    item['product_tags'] = list 
-    
+    list.append(tg1)
+    list.append(tg2)  
+    for index in range(len(res)):
+        v = (res[index])
+        v = v.strip()
+        if v!='/':
+          list.append(v)
+     
+            
+    item['tag'] = list 
+    item['tag_product_ids']  = productIDs
+      
+  
     return item
 
-  def PriceExtractor(self, item, selector):
-    prod_price = selector.xpath('//h2[@itemprop="name"]//text()').extract()
-    price = selector.xpath('//span[@itemprop="price"]//text()').extract()
-    item['list_price'] = price[0]
-    for price in prod_price:
-      if re.search(r"(\$\d*\.\d\d)", price):
-        item['list_price'] = re.search(r"(\$\d*\.\d\d)", price).group(1)
-      if re.search(r"Reg. (\$\d*\.\d\d)", price):
-        item['list_price'] = re.search(r"Reg. (\$\d*\.\d\d)", price).group(1)
-      elif re.search(r"Sale (\$\d*\.\d\d)", price):
-        item['sale_price'] = re.search(r"Sale (\$\d*\.\d\d)", price).group(1)
-      elif re.search(r"(\$\d*\.\d\d)", price):
-        item['list_price'] = re.search(r"(\$\d*\.\d\d)", price).group(1)
-
-  def ProductNumExtract(self, item, response_url):
-    if re.search(r"(/\d+/)", response_url):
-      item['product_item_num'] = re.search(r"/(\d+)/", response_url).group(1)
+  def AddTags(self,item,url):  
+     par = urlparse.parse_qs(urlparse.urlparse(url).query)
+     
+     res = par["ProductID"]
+     return res[0]
+ 
+   
+ 

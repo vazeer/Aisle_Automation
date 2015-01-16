@@ -71,7 +71,7 @@ class ZaraProductTagsSpider(CrawlSpider):
                    ]
   rules = (
    
-  Rule(SgmlLinkExtractor(restrict_xpaths='//li[@class="current selected"]'),callback='myParserTest',errback='myParserTest'),
+  Rule(SgmlLinkExtractor(restrict_xpaths='//li[@class="current selected"]'),callback='myParserTest'),
    
   )
   
