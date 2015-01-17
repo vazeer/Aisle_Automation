@@ -95,13 +95,15 @@ class ModdealsTagsSpider(CrawlSpider):
     res  = hxs.xpath('(//div[@id="breadcrumbs"]//a/text())[position()>1]').extract()
         
     list = []
-   
+    list.append('Women') 
     for index in range(len(res)):
         v = (res[index])
         v = v.strip()
         if v!='/':
           list.append(v)
-     
+    
+    # moddeals is all about women      
+    
             
     item['tag'] = list 
     item['tag_product_ids']  = productIDs
