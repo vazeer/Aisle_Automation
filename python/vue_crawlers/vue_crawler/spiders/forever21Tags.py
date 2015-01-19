@@ -5,11 +5,6 @@ Created on Jun 13, 2014
 '''
 
 import re
-import nltk
-from nltk.collocations import *
-from nltk.stem import *
-
-
 
 from scrapy.contrib.spiders import CrawlSpider, Rule
 from scrapy.contrib.linkextractors.sgml import SgmlLinkExtractor

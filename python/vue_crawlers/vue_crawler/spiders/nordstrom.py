@@ -437,8 +437,7 @@ class NordstromSpider(CrawlSpider):
     
     sale_text = sel.xpath('(//section[@id="price"]//span[@class="sale-price"]/text()|//section[@id="price"]//span[@class="sale-price long-price"]/text())[1]').extract()
     list_text = sel.xpath('(//section[@id="price"]//span[@class="regular-price"]/text())[1]').extract()
-    print 'KKKKKKKKKK111111 ' ,sale_text  
-    print 'KKKKKKKKKK222222' ,list_text 
+   
     
     print '',
     
