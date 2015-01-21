@@ -53,7 +53,9 @@ class VueCrawlerItem(Item):
   
   #tags to products
   product_tags = Field()
-
+  
+  #currency code
+  currencyCode = Field()
 
   tag = Field()
   tag_product_ids = Field()

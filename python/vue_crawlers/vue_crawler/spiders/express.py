@@ -13,7 +13,7 @@ from scrapy.contrib.linkextractors.sgml import SgmlLinkExtractor
 from vue_crawler.items import VueCrawlerItem
 
 
-class MacysSpider(CrawlSpider):
+class ExpressSpider(CrawlSpider):
   name = "express"
   allowed_domains = ['express.com']
   start_urls = [
@@ -104,7 +104,9 @@ class MacysSpider(CrawlSpider):
         item['description'].append(desc_bullet.strip())
         
     sizes = sel.xpath('(//select[@name="express-view-sizes-dropdown"]//option/text())[position()>1]').extract()
-    
+    item['image_urls'] = ['http:'+sel.xpath('//div[@class="product-exp-view-image"]//a/@href').extract()[0]]
+  
+         
     sizesstripped = [];
     for index in range(len(sizes)):
         v = str(sizes[index])

@@ -1,0 +1,12 @@
+{"product_item_num": "http://www.jabong.com/he-gud-look-Black-Printed-Shrugs-972993.html"}
+{"product_item_num": "http://www.jabong.com/vero-moda-MINERAL-GRAY-T-SHIRT-905619.html"}
+{"product_item_num": "http://www.jabong.com/the-vanca-Black-Printed-Shrugs-783751.html"}
+{"product_item_num": "http://www.jabong.com/vovoka-Blue-Solids-Shrug-690330.html"}
+{"product_item_num": "http://www.jabong.com/zinc-london-Black-Jersey-Free-Fall-Shrug-627855.html"}
+{"product_item_num": "http://www.jabong.com/trend18-Black-Floral-Shrug-707679.html"}
+{"product_item_num": "http://www.jabong.com/rinku-sobti-Multi-Embroidered-Summer-Jackets-790061.html"}
+{"product_item_num": "http://www.jabong.com/tops-and-tunics-Black-Embellished-Shrug-602187.html"}
+{"product_item_num": "http://www.jabong.com/United-Colors-of-Benetton-Blue-Shrugs-359370.html"}
+{"product_item_num": "http://www.jabong.com/the-tshirt-company-Sleeveless-Long-Solid-Yellow-Shrug-635107.html"}
+{"product_item_num": "http://www.jabong.com/suhi-Solid-Beige-Shrugs-708932.html"}
+{"product_item_num": "http://www.jabong.com/svarikaa-Maroon-Solid-Summer-Jackets-569826.html"}

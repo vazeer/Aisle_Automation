@@ -19,3 +19,4 @@ ITEM_PIPELINES = {'vue_crawler.pipelines.NordstromPipeline': 1}
 IMAGES_STORE = '/Users/Geli/Behrooz/VUE/scraped_imgs/nordstrom'
 
 IMAGES_EXPIRES = 20
+
